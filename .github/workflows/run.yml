@@ -1,0 +1,25 @@
+name: Build and run Madeline bot (one-off)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build docker image
+        run: docker build -t my-madeline-bot:latest .
+
+      - name: Run bot container (uses secret)
+        # pass secret into the container as an env var BOT_TOKEN
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          # run the container; it will read BOT_TOKEN from environment
+          docker run --rm \
+            -e BOT_TOKEN="$BOT_TOKEN" \
+            my-madeline-bot:latest
+
